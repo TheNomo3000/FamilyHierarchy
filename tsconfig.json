@@ -14,7 +14,13 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "family-hierarchy": [
+        "dist/family-hierarchy/family-hierarchy",
+        "dist/family-hierarchy"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
