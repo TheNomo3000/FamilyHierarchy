@@ -1,6 +1,7 @@
 {
   "name": "family-hierarchy",
   "version": "0.1.0",
+  "license": "MIT",
   "peerDependencies": {
     "@angular/common": "^9.0.7",
     "@angular/core": "^9.0.7",
@@ -14,5 +15,20 @@
   },
   "dependencies": {
     
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheNomo3000/FamilyHierarchy.git"
+  },
+  "keywords": [
+    "angular",
+    "angular 9",
+    "family",
+    "hierarchy",
+    "vis",
+    "vis-network",
+    "visjs",
+    "lightweight",
+    "simple"
+  ]
 }
