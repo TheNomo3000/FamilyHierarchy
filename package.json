@@ -5,8 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:lib" : "ng build FamilyHierarchy --prod",
-    "publish:lib": "cd dist/family-hierarchy && npm publish",
+    "build:lib" : "cd projects/family-hierarchy && npm version patch && cd ../../ && ng build FamilyHierarchy --prod",
+    "publish:lib": " cd dist/family-hierarchy && npm publish",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
