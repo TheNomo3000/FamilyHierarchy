@@ -1,24 +1,35 @@
 # FamilyHierarchy
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.0.7.
+### Description :
+A small library for **Angular 9+** that implements [vis-network](https://github.com/visjs/vis-network) to generate a hierarchy chart of a family.
 
-## Code scaffolding
+![Example FamilyHierarchy](https://i.imgur.com/f54rxiV.png)
 
-Run `ng generate component component-name --project FamilyHierarchy` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project FamilyHierarchy`.
-> Note: Don't forget to add `--project FamilyHierarchy` or else it will be added to the default project in your `angular.json` file. 
+### Installation :
+Just add the FamilyHierarchy for use the component
 
-## Build
+```typescript
+import { FamilyHierarchy } from 'FamilyHierarchy';
+import { AppComponent } from './app.component';
 
-Run `ng build FamilyHierarchy` to build the project. The build artifacts will be stored in the `dist/` directory.
+@NgModule({
+ imports: [
+	(...)
+	FamilyHierarchy,
+	(...)
+ ],
+ declarations: [AppComponent],
+})
+```
 
-## Publishing
+### Example
 
-After building your library with `ng build FamilyHierarchy`, go to the dist folder `cd dist/family-hierarchy` and run `npm publish`.
-
-## Running unit tests
-
-Run `ng test FamilyHierarchy` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+```html
+<family-hierarchy [edges]="edges" [nodes]="nodes">
+	<ng-template  #nodeTemplate>
+		<svg>
+		(...)
+		</svg>
+	</ng-template>
+</family-hierarchy>
+```
