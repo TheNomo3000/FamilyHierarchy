@@ -9,6 +9,14 @@ const UNIONS: FhUnion [] = [
     data: {
       test: `I'm a test :D`
     }
+  },
+  {
+    id: 2,
+    components: [3, 4]
+  },
+  {
+    id: 10,
+    components: [88, 5]
   }
 ];
 
@@ -16,6 +24,18 @@ const LINKS: FhLink [] = [
   {
     unionId: 1,
     nodeId: 3
+  },
+  {
+    unionId: 1,
+    nodeId: 5
+  },
+  {
+    unionId: 2,
+    nodeId: 90
+  },
+  {
+    unionId: 2,
+    nodeId: 87
   }
 ];
 
@@ -40,8 +60,48 @@ const NODES: FhNode [] = [
   },
   {
     id: 3,
-    label: 'Julia',
+    label: 'Júlia',
     level: 2,
+    data: {
+      age: 1
+    }
+  },
+  {
+    id: 5,
+    label: 'Marc',
+    level: 2,
+    data: {
+      age: 1
+    }
+  },
+  {
+    id: 88,
+    label: 'Raúl',
+    level: 2,
+    data: {
+      age: 1
+    }
+  },
+  {
+    id: 4,
+    label: 'Mario',
+    level: 2,
+    data: {
+      age: 1
+    }
+  },
+  {
+    id: 90,
+    label: 'Alexa',
+    level: 3,
+    data: {
+      age: 1
+    }
+  },
+  {
+    id: 87,
+    label: 'Pablo',
+    level: 3,
     data: {
       age: 1
     }
