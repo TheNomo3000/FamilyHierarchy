@@ -11,7 +11,7 @@ export class INode {
 export class IEdge {
   from: any;
   to: any;
-  arrows: string;
+  arrows: string = 'from';
   physics: boolean;
   smooth: {
     type: string;

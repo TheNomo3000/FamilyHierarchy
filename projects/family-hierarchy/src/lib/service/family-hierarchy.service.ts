@@ -10,6 +10,8 @@ export class FamilyHierarchyService {
   private links: FhLink [] = [];
   private unions: FhUnion [] = [];
   private config: FhConfig;
+
+  n = 0;
   constructor() { }
 
   transformData(nodes: FhNode [], links: FhLink [], unions: FhUnion [], config: FhConfig): IData {
@@ -23,6 +25,8 @@ export class FamilyHierarchyService {
         node.id = o.id;
         node.image = o.image ? o.image : this.config.nodes.images;
         node.size = this.config.nodes.size;
+        node.level = (o.level * 2) - 1;
+        console.log(node.level);
         node.label = o.label;
         return node;
       }
@@ -34,6 +38,7 @@ export class FamilyHierarchyService {
         const link = new IEdge();
         link.from = o.nodeId;
         link.to = `u${o.unionId}`;
+        link.arrows = 'from';
         return link;
       }
     );
@@ -53,19 +58,22 @@ export class FamilyHierarchyService {
   }
 
   generateUnion(unions: FhUnion []): void {
+    let level;
     unions.map(
       (u: FhUnion) => {
         const node = new INode();
         node.id = `u${u.id}`;
         node.image = this.config.union.images;
         node.size = this.config.union.size;
-        this.data.nodes.push(node);
         u.components.forEach(e => {
           const edge = new IEdge();
           edge.from = node.id;
           edge.to = e;
+          level = this.nodes.filter( n => n.id === e)[0].level;
           this.data.edges.push(edge);
         });
+        node.level = (level * 2);
+        this.data.nodes.push(node);
       }
     );
   }
