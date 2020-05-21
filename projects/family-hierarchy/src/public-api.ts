@@ -2,7 +2,6 @@
  * Public API Surface of family-hierarchy
  */
 
-export * from './lib/family-hierarchy.component';
+export * from './lib/component/family-hierarchy.component';
 export * from './lib/family-hierarchy.module';
-export * from './lib/models/interfaces';
-export * from './lib/config/default';
+export * from './lib/models/models';
