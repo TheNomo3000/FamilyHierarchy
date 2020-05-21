@@ -6,6 +6,8 @@ A small library for **Angular 9+** that implements [vis-network](https://github.
 
 ## Pre-requisites
 
+[Demo](https://thenomo3000.github.io/FamilyHierarchy/)
+
 We use ngx-vis, to generate the graph, and so we have to install some dependencies: 
 
 ```bash
