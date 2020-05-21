@@ -1,14 +1,14 @@
-export interface IFamilyNode {
+export class INode {
   id: any;
   label: string;
   color: string;
-  shape: string;
+  shape = 'image';
   size: number;
   level: number;
   image: string;
 }
 
-export interface IFamilyEdge {
+export class IEdge {
   from: any;
   to: any;
   arrows: string;
@@ -25,7 +25,7 @@ export interface IFamilyEdge {
   };
 }
 
-export interface IFamilyData {
-  nodes: IFamilyNode [];
-  edges: IFamilyEdge [];
+export class IData {
+  nodes: INode [];
+  edges: IEdge [];
 }
