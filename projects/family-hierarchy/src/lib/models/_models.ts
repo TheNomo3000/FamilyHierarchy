@@ -11,17 +11,18 @@ export class INode {
 export class IEdge {
   from: any;
   to: any;
-  arrows: string;
+  arrows?: string = 'from';
   physics: boolean;
-  smooth: {
-    type: string;
+  smooth = {
+    enabled: true,
+    type: 'dynamic'
   };
   color: {
-    color: string;
-    highlight: string;
-    hover: string;
-    inherit: string;
-    opacity: number;
+    color?: string;
+    highlight?: string;
+    hover?: string;
+    inherit?: string;
+    opacity?: number;
   };
 }
 

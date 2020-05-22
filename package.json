@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:gh": "ng build --prod --base-href https://thenomo3000.github.io/FamilyHierarchy/",
+    "publish:gh": "git subtree push --prefix dist/FamilyHierarchyDemo origin gh-pages",
     "build:lib" : "cd projects/family-hierarchy && npm version patch && cd ../../ && ng build FamilyHierarchy --prod",
     "publish:lib": " cd dist/family-hierarchy && npm publish",
     "test": "ng test",
