@@ -121,7 +121,7 @@ export class AppComponent {
     links: {
       childrens: {
         styles: {
-          color: 'red'
+          color: '#848484'
         }
       }
     },

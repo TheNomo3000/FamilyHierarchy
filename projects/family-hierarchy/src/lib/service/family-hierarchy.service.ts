@@ -26,7 +26,6 @@ export class FamilyHierarchyService {
         node.image = o.image ? o.image : this.config.nodes.images;
         node.size = this.config.nodes.size;
         node.level = (o.level * 2) - 1;
-        console.log(node.level);
         node.label = o.label;
         return node;
       }
@@ -35,11 +34,11 @@ export class FamilyHierarchyService {
     // Generate links with union nodes
     this.data.edges = links.map(
       (o: FhLink) => {
-        const link = new IEdge();
-        link.from = o.nodeId;
-        link.to = `u${o.unionId}`;
-        link.arrows = 'from';
-        return link;
+        const edge = new IEdge();
+        edge.from = o.nodeId;
+        edge.to = `u${o.unionId}`;
+        edge.color = this.config.links.childrens.styles;
+        return edge;
       }
     );
 
@@ -69,6 +68,7 @@ export class FamilyHierarchyService {
           const edge = new IEdge();
           edge.from = node.id;
           edge.to = e;
+          edge.color = this.config.links.parents.styles;
           level = this.nodes.filter( n => n.id === e)[0].level;
           this.data.edges.push(edge);
         });
