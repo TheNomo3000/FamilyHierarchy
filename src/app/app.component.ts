@@ -169,12 +169,13 @@ export class AppComponent {
     const n: FhNode = {
       id: 23,
       label: 'Rodrigo',
-      level: 1,
+      level: 3,
       data: {
         age: 25
       }
     };
     // this.fhService.createPerson(n);
+    this.fhService.addNode(n);
   }
 
   createUnion(): void {
@@ -186,10 +187,17 @@ export class AppComponent {
       }
     } 
     // this.fhService.createUnion(n);
+    this.fhService.addUnion(n);
   }
 
   createLink(): void {
+    const l : FhLink = {
+      id: 99,
+      nodeId: 23,
+      unionId: 2
+    }
     this.editMode = true;
+    this.fhService.addLink(l);
     // this.fhService.createLink();
   }
 }

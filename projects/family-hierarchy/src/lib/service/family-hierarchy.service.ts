@@ -198,4 +198,18 @@ export class FamilyHierarchyService {
     this.currentNodes.getValue().add(node);
   }
 
+  public addNode(node: FhNode): void {
+    this.currentFhNodes.getValue().push(node);
+    this.currentNodes.getValue().add(this.createNode(node));
+  }
+
+  public addLink(link: FhLink): void {
+    this.currentFhLinks.getValue().push(link);
+    this.currentEdges.getValue().add(this.createEdge(link));
+  }
+
+  public addUnion(union: FhUnion): void {
+    this.currentFhUnions.getValue().push(union);
+    this.createUnion(union);
+  }
 }

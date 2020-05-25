@@ -29,7 +29,6 @@ export class FamilyHierarchyComponent implements  OnInit, OnDestroy, AfterViewIn
 
   subs = new Subscription();
 
-
   constructor(private familyService: FamilyHierarchyService) {
     this.subs.add(this.familyService._config.subscribe((config: FhConfig) => this.config = config));
     this.subs.add(this.familyService.Edges.subscribe((edges: DataSet<Edge>) => this.dsEdge = edges));
