@@ -1,7 +1,8 @@
-<div class="vis-container"
+<!-- <div class="vis-container"
   [visNetwork]="visNetwork"
   [visNetworkData]="visNetworkData"
   [visNetworkOptions]="visNetworkOptions"
   (initialized)="networkInitialized()">
 </div>
-
+ -->
+<div #box [class.edit-mode]="editMode" [ngClass]="['vis-container', class]"></div>

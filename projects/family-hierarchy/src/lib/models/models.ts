@@ -1,3 +1,7 @@
+export interface FhData {
+  nodes?: FhNode [];
+  links?: FhLink [];
+}
 export interface FhNode {
   id: any;
   label: string;

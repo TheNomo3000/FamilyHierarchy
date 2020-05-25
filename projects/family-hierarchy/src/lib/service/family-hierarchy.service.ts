@@ -1,80 +1,170 @@
-import { Injectable } from '@angular/core';
-import { FhNode, FhLink, FhUnion, FhConfig} from '../models/models';
-import { IData, INode, IEdge } from '../models/_models';
+import { Injectable, EventEmitter } from '@angular/core';
+import { Subject, BehaviorSubject, Observable } from 'rxjs';
+import { FhNode, FhUnion, FhLink, FhConfig } from '../models/models';
+import { DataSet, Node, Edge } from 'vis-network/standalone';
+import { DEFAULT_CONFIG } from '../config/default';
+import { isObject } from 'util';
+
+/* tslint:disable */
+
 @Injectable({
   providedIn: 'root'
 })
 export class FamilyHierarchyService {
-  private data = new IData();
-  private nodes: FhNode [];
-  private links: FhLink [] = [];
-  private unions: FhUnion [] = [];
-  private config: FhConfig;
+  private currentEdges = new BehaviorSubject<DataSet<Edge>>(new DataSet<Edge>());
+  private _Edges : Observable<DataSet<Edge>> = this.currentEdges.asObservable();
 
-  n = 0;
-  constructor() { }
+  public get Edges(): Observable<DataSet<Edge>> {
+    return this._Edges;
+  }
+  
+  private currentNodes = new BehaviorSubject<DataSet<Node>>(new DataSet<Node>());
+  private _Nodes : Observable<DataSet<Node>> = this.currentNodes.asObservable();
 
-  transformData(nodes: FhNode [], links: FhLink [], unions: FhUnion [], config: FhConfig): IData {
-    this.config = config;
-    this.nodes = nodes;
-    this.links = links;
-    this.unions = unions;
-    this.data.nodes = this.nodes.map(
-      (o: FhNode) => {
-        const node = new INode();
-        node.id = o.id;
-        node.image = o.image ? o.image : this.config.nodes.images;
-        node.size = this.config.nodes.size;
-        node.level = (o.level * 2) - 1;
-        node.label = o.label;
-        return node;
-      }
-    );
-
-    // Generate links with union nodes
-    this.data.edges = links.map(
-      (o: FhLink) => {
-        const edge = new IEdge();
-        edge.from = o.nodeId;
-        edge.to = `u${o.unionId}`;
-        edge.color = this.config.links.childrens.styles;
-        return edge;
-      }
-    );
-
-    // Generate union nodes
-    this.generateUnion(unions);
-    return this.data;
+  public get Nodes(): Observable<DataSet<Node>> {
+    return this._Nodes;
   }
 
-  getFamilyNode(nodeId: any): FhNode | FhUnion {
-    if (typeof(nodeId) === 'string' && nodeId.charAt(0) === 'u') {
-      const id = nodeId.substr(1);
-      return this.unions.filter( n => n.id == id)[0];
-    } else {
-      return this.nodes.filter( n => n.id === nodeId)[0];
+  private currentFhNodes = new BehaviorSubject<FhNode []>([]);
+  public _fhNodes: Observable<FhNode []> = this.currentFhNodes.asObservable();
+  public setFhNodes(nodes: FhNode []) {
+    this.currentNodes.next(this.generateNodes(nodes));
+    this.currentFhNodes.next(nodes);
+  }
+  public get FhNodes(): Observable<FhNode []> {
+    return this._fhNodes;
+  }
+
+  private currentFhUnions = new Subject<FhUnion []>();
+  public _fhUnions: Observable<FhUnion []> = this.currentFhUnions.asObservable();
+  public setFhUnions(unions: FhUnion []) {
+    this.generateUnions(unions);
+    this.currentFhUnions.next(unions);
+  }
+  public get FhUnions(): Observable<FhUnion []> {
+    return this._fhUnions;
+  }
+
+  private currentFhLinks = new Subject<FhLink []>();
+  public _fhLinks: Observable<FhLink []> = this.currentFhLinks.asObservable();
+  public setFhLinks(links: FhLink []) {
+    this.currentEdges.next(this.generateEdges(links))
+    this.currentFhLinks.next(links);
+  }
+  get FhLinks(): Observable<FhLink []> {
+    return this._fhLinks;
+  }
+
+ 
+  private currentConfig = new BehaviorSubject<FhConfig>(DEFAULT_CONFIG);
+  public _config: Observable<FhConfig> = this.currentConfig.asObservable();
+  public setConfig(config: FhConfig) {
+    this.currentConfig.next(this.mergeDeep(this.currentConfig.getValue(), config));
+  }
+  public get config(): Observable<FhConfig> {
+    return this._config;
+  }
+
+  /*
+  * Evento de click sobre un nodo, devuelve el dato del nodo
+  */
+  public clickNode: EventEmitter<any> = new EventEmitter<any>();
+
+  constructor() { }
+
+  public initialize(nodes: FhNode [], links: FhLink [], unions: FhUnion [], config?: FhConfig): void {
+    this.setFhNodes(nodes);
+    this.setFhLinks(links);
+    this.setFhUnions(unions);
+    if (config) {
+      this.setConfig(config);
     }
   }
 
-  generateUnion(unions: FhUnion []): void {
-    let level;
-    unions.map(
-      (u: FhUnion) => {
-        const node = new INode();
-        node.id = `u${u.id}`;
-        node.image = this.config.union.images;
-        node.size = this.config.union.size;
-        u.components.forEach(e => {
-          const edge = new IEdge();
-          edge.from = node.id;
-          edge.to = e;
-          edge.color = this.config.links.parents.styles;
-          level = this.nodes.filter( n => n.id === e)[0].level;
-          this.data.edges.push(edge);
-        });
-        node.level = (level * 2);
-        this.data.nodes.push(node);
+  private mergeDeep(target, ...sources) {
+    if (!sources.length) { return target; }
+    const source = sources.shift();
+    if (isObject(target) && isObject(source)) {
+      for (const key in source) {
+        if (isObject(source[key])) {
+          if (!target[key]) {
+            Object.assign(target, { [key]: {} });
+          } else {
+            target[key] = Object.assign({}, target[key]);
+          }
+          this.mergeDeep(target[key], source[key]);
+        } else {
+          Object.assign(target, { [key]: source[key] });
+        }
       }
+    }
+    return this.mergeDeep(target, ...sources);
+  }
+
+  private generateNodes(nodes: FhNode []): DataSet<Node> {
+    return new DataSet<Node> (
+      nodes.map(
+        (o: FhNode) => {
+          return this.createNode(o);
+        }
+      )
     );
   }
+
+  private createNode(o: FhNode): Node {
+    return {
+      id : o.id,
+      image : o.image ? o.image : this.currentConfig.getValue().nodes.images,
+      shape: 'image',
+      size : this.currentConfig.getValue().nodes.size,
+      level : (o.level * 2) - 1,
+      label : o.label
+    };
+  }
+
+  private createEdge(o: FhLink): Edge {
+   return {
+      from: o.nodeId,
+      to: `u${o.unionId}`,
+      color: this.currentConfig.getValue().links.childrens.styles
+    };
+  }
+
+  private generateEdges(links: FhLink []): DataSet<Edge> {
+    return new DataSet<Edge> (
+      links.map(
+        (o: FhLink) => {
+          return this.createEdge(o);
+        }
+      )
+    );
+  }
+
+  private generateUnions(unions: FhUnion []): void {
+    unions.forEach((u: FhUnion) => {
+      this.createUnion(u);
+    });
+  }
+
+  private createUnion(u: FhUnion): void {
+    let level;
+    const node: Node = {
+      id: `u${u.id}`,
+      image: this.currentConfig.getValue().union.images,
+      shape: 'image',
+      size: this.currentConfig.getValue().union.size,
+    };
+    u.components.forEach((e:number | string) => {
+      const edge: Edge = {
+        from: node.id,
+        to: e,
+        color: this.currentConfig.getValue().links.parents.styles,
+      };
+      level = this.currentFhNodes.getValue().filter( n => n.id === e)[0].level;
+      this.currentEdges.getValue().add(edge);
+    });
+    node.level = (level * 2);
+    this.currentNodes.getValue().add(node);
+  }
+
 }

@@ -7,7 +7,7 @@
     "build": "ng build",
     "build:gh": "ng build --prod --base-href https://thenomo3000.github.io/FamilyHierarchy/",
     "publish:gh": "git subtree push --prefix dist/FamilyHierarchyDemo origin gh-pages",
-    "build:lib" : "cd projects/family-hierarchy && npm version patch && cd ../../ && ng build FamilyHierarchy --prod",
+    "build:lib": "cd projects/family-hierarchy && npm version patch && cd ../../ && ng build FamilyHierarchy --prod",
     "publish:lib": " cd dist/family-hierarchy && npm publish",
     "test": "ng test",
     "lint": "ng lint",
@@ -23,8 +23,10 @@
     "@angular/platform-browser": "~9.0.7",
     "@angular/platform-browser-dynamic": "~9.0.7",
     "@angular/router": "~9.0.7",
+    "keycharm": "^0.3.1",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
+    "vis-data": "^6.5.3",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {

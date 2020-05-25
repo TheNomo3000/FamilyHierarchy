@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FhUnion, FhNode, FhLink } from 'projects/family-hierarchy/src/lib/models/models';
 import { FhConfig } from 'projects/family-hierarchy/src/public-api';
+import { FamilyHierarchyService } from 'projects/family-hierarchy/src/lib/service/family-hierarchy.service';
 
 const UNIONS: FhUnion [] = [
   {
@@ -114,6 +115,7 @@ const NODES: FhNode [] = [
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  editMode = false;
   links = LINKS;
   unions = UNIONS;
   nodes = NODES;
@@ -131,9 +133,40 @@ export class AppComponent {
   };
   result;
 
-  constructor() { }
+  constructor(private fhService: FamilyHierarchyService) {
+    this.fhService.initialize(NODES, LINKS, UNIONS, this.config);
+    this.fhService.clickNode.subscribe( (e) => {console.log('EVENT RECIVED: ', e)})
+  }
 
   nodeSelected(node: FhNode | FhUnion): void {
     this.result = JSON.stringify(node);
+  }
+
+  createNode(): void {
+    const n: FhNode = {
+      id: 23,
+      label: 'Rodrigo',
+      level: 1,
+      data: {
+        age: 25
+      }
+    };
+    // this.fhService.createPerson(n);
+  }
+
+  createUnion(): void {
+    const n = {
+      id: 20,
+      components: [23, 1],
+      data: {
+        test: `I'm a test :D`
+      }
+    } 
+    // this.fhService.createUnion(n);
+  }
+
+  createLink(): void {
+    this.editMode = true;
+    // this.fhService.createLink();
   }
 }
