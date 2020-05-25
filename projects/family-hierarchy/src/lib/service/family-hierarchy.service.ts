@@ -35,7 +35,7 @@ export class FamilyHierarchyService {
     return this._fhNodes;
   }
 
-  private currentFhUnions = new Subject<FhUnion []>();
+  private currentFhUnions = new BehaviorSubject<FhUnion []>([]);
   public _fhUnions: Observable<FhUnion []> = this.currentFhUnions.asObservable();
   public setFhUnions(unions: FhUnion []) {
     this.generateUnions(unions);
@@ -45,7 +45,7 @@ export class FamilyHierarchyService {
     return this._fhUnions;
   }
 
-  private currentFhLinks = new Subject<FhLink []>();
+  private currentFhLinks = new BehaviorSubject<FhLink []>([]);
   public _fhLinks: Observable<FhLink []> = this.currentFhLinks.asObservable();
   public setFhLinks(links: FhLink []) {
     this.currentEdges.next(this.generateEdges(links))
@@ -68,8 +68,37 @@ export class FamilyHierarchyService {
   /*
   * Evento de click sobre un nodo, devuelve el dato del nodo
   */
-  public clickNode: EventEmitter<any> = new EventEmitter<any>();
+  private _clickNode = new Subject<any>();
+  public clickNode = this._clickNode.asObservable();
 
+  private _clickUnion = new Subject<any>();
+  public clickUnion = this._clickUnion.asObservable();
+
+  private _clickLink = new Subject<any>();
+  public clickLink = this._clickLink.asObservable();
+  
+  public sendClickEvent(e: any, type?: string): void {
+    if (type === 'node') {
+      const node = this.currentFhNodes.getValue().find( el => el.id === e.nodes[0]);
+      if (node) {
+        this._clickNode.next(node);
+      } else { 
+        const id = e.nodes[0].replace('u','');
+        const union = this.currentFhUnions.getValue().find( el => el.id == id)
+        this._clickUnion.next(union);
+      }
+    } else {
+      const link  = this.currentFhLinks.getValue().find( el => el.id == e.edges[0]);
+      if (link) {
+        this._clickLink.next(link);
+      } else {
+        const regex = /(?<=l)(.*?)(?=_)/;
+        const id: string = e.edges[0].toString().match(regex)[0];
+        this._clickLink.next(this.currentFhUnions.getValue().find( o => o.id == id) )
+      }
+    }
+  }
+  
   constructor() { }
 
   public initialize(nodes: FhNode [], links: FhLink [], unions: FhUnion [], config?: FhConfig): void {
@@ -124,6 +153,7 @@ export class FamilyHierarchyService {
 
   private createEdge(o: FhLink): Edge {
    return {
+      id: o.id,
       from: o.nodeId,
       to: `u${o.unionId}`,
       color: this.currentConfig.getValue().links.childrens.styles
@@ -156,6 +186,7 @@ export class FamilyHierarchyService {
     };
     u.components.forEach((e:number | string) => {
       const edge: Edge = {
+        id: `l${u.id}_${node.id}-${e}`,
         from: node.id,
         to: e,
         color: this.currentConfig.getValue().links.parents.styles,

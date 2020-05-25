@@ -23,18 +23,22 @@ const UNIONS: FhUnion [] = [
 
 const LINKS: FhLink [] = [
   {
+    id: 1,
     unionId: 1,
     nodeId: 3
   },
   {
+    id: 2,
     unionId: 1,
     nodeId: 5
   },
   {
+    id: 3,
     unionId: 2,
     nodeId: 90
   },
   {
+    id: 4,
     unionId: 2,
     nodeId: 87
   }
@@ -135,7 +139,26 @@ export class AppComponent {
 
   constructor(private fhService: FamilyHierarchyService) {
     this.fhService.initialize(NODES, LINKS, UNIONS, this.config);
-    this.fhService.clickNode.subscribe( (e) => {console.log('EVENT RECIVED: ', e)})
+    // this.fhService.clickNode.subscribe( (e) => {console.log('EVENT RECIVED: ', e)})
+    this.fhService.clickNode.subscribe(
+      (result) => {
+        console.log('NODE: ', result);
+      }
+    );
+
+    this.fhService.clickLink.subscribe(
+      (result) => {
+        console.log('LINK: ', result);
+
+      }
+    );
+
+    this.fhService.clickUnion.subscribe(
+      (result) => {
+        console.log('UNION: ', result);
+
+      }
+    );
   }
 
   nodeSelected(node: FhNode | FhUnion): void {

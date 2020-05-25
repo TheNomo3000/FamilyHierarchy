@@ -6,7 +6,8 @@ const DEFAULT_UNION_IMAGE = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wI
 
 export const OPTION_DEFAULT: Options = {
   interaction: {
-    hover: true
+    hover: true,
+    selectConnectedEdges: false
   },
   layout: {
     hierarchical: {

@@ -12,6 +12,7 @@ export interface FhNode {
 }
 
 export interface FhLink {
+  id: any;
   unionId: any;
   nodeId: any;
 }
