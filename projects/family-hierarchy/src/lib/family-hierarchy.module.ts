@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { FamilyHierarchyComponent } from './component/family-hierarchy.component';
-import { VisModule } from 'ngx-vis';
 import { CommonModule } from '@angular/common';
 
 
@@ -8,7 +7,6 @@ import { CommonModule } from '@angular/common';
   declarations: [FamilyHierarchyComponent],
   imports: [
     CommonModule,
-    VisModule,
   ],
   exports: [FamilyHierarchyComponent]
 })

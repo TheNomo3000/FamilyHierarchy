@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FhUnion, FhNode, FhLink } from 'projects/family-hierarchy/src/lib/models/models';
 import { FhConfig } from 'projects/family-hierarchy/src/public-api';
+import { FamilyHierarchyService } from 'projects/family-hierarchy/src/lib/service/family-hierarchy.service';
 
 const UNIONS: FhUnion [] = [
   {
@@ -22,18 +23,22 @@ const UNIONS: FhUnion [] = [
 
 const LINKS: FhLink [] = [
   {
+    id: 1,
     unionId: 1,
     nodeId: 3
   },
   {
+    id: 2,
     unionId: 1,
     nodeId: 5
   },
   {
+    id: 3,
     unionId: 2,
     nodeId: 90
   },
   {
+    id: 4,
     unionId: 2,
     nodeId: 87
   }
@@ -114,6 +119,7 @@ const NODES: FhNode [] = [
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  editMode = false;
   links = LINKS;
   unions = UNIONS;
   nodes = NODES;
@@ -131,9 +137,64 @@ export class AppComponent {
   };
   result;
 
-  constructor() { }
+  constructor(private fhService: FamilyHierarchyService) {
+    this.fhService.initialize(NODES, LINKS, UNIONS, this.config);
+    // this.fhService.clickNode.subscribe( (e) => {console.log('EVENT RECIVED: ', e)})
+    this.fhService.clickNode.subscribe(
+      (result) => {
+        console.log('NODE: ', result);
+      }
+    );
+
+    this.fhService.clickLink.subscribe(
+      (result) => {
+        console.log('LINK: ', result);
+
+      }
+    );
+
+    this.fhService.clickUnion.subscribe(
+      (result) => {
+        console.log('UNION: ', result);
+
+      }
+    );
+  }
 
   nodeSelected(node: FhNode | FhUnion): void {
     this.result = JSON.stringify(node);
+  }
+
+  createNode(): void {
+    const n: FhNode = {
+      id: 23,
+      label: 'Rodrigo',
+      level: 3,
+      data: {
+        age: 25
+      }
+    };
+    this.fhService.addNode(n);
+  }
+
+  createUnion(): void {
+    const n: FhUnion = {
+      id: 20,
+      components: [23, 1],
+      data: {
+        test: `I'm a test :D`
+      }
+    };
+    this.fhService.addUnion(n);
+  }
+
+  createLink(): void {
+    const l: FhLink = {
+      id: 99,
+      nodeId: 23,
+      unionId: 2
+    }
+    this.editMode = true;
+    this.fhService.addLink(l);
   }
 }

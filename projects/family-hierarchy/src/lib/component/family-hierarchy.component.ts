@@ -1,10 +1,9 @@
-import { Component, ElementRef, ViewChild, Input, ContentChild, TemplateRef, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { VisNetworkService, Options } from 'ngx-vis';
-import { OPTION_DEFAULT, DEFAULT_CONFIG } from '../config/default';
+import { Component, ElementRef, ViewChild, Input, ContentChild, TemplateRef, OnInit, Output, EventEmitter, OnDestroy, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import { OPTION_DEFAULT } from '../config/default';
 import { FamilyHierarchyService } from '../service/family-hierarchy.service';
-import { FhNode, FhUnion, FhConfig } from '../models/models';
-import { IData } from '../models/_models';
-import { isObject } from 'util';
+import { FhConfig } from '../models/models';
+import { DataSet, Node, Edge, Network, Data } from 'vis-network/standalone';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'FamilyHierarchy',
@@ -12,62 +11,52 @@ import { isObject } from 'util';
   styleUrls: ['./family-hierarchy.component.scss']
 })
 
-export class FamilyHierarchyComponent implements  OnInit, OnDestroy {
+export class FamilyHierarchyComponent implements  OnInit, OnDestroy, AfterViewInit {
   @ViewChild('box') el: ElementRef;
   @ContentChild('nodeTemplate') nodeTemplate: TemplateRef<any>;
   @ViewChild('contentNode') contentNode: ElementRef;
 
-  @Input() nodes: any [] = [];
-  @Input() links: any [] = [];
-  @Input() unions: any [] = [];
-  @Input() config: FhConfig;
 
-  @Output() selected = new EventEmitter<FhNode | FhUnion>();
+  @Input() class: string;
+  @Input() editMode = false;
 
-  public visNetwork = 'networkId1';
-  public visNetworkData: IData;
-  public visNetworkOptions: Options = OPTION_DEFAULT;
+  config: FhConfig;
+  dsNode: DataSet<Node>;
+  dsEdge: DataSet<Edge>;
 
-  constructor(private visNetworkService: VisNetworkService, private familyService: FamilyHierarchyService) {
+  visNetwork: Network;
+  visNetworkData: Data;
+
+  subs = new Subscription();
+
+  constructor(private familyService: FamilyHierarchyService) {
+    this.subs.add(this.familyService._config.subscribe((config: FhConfig) => this.config = config));
+    this.subs.add(this.familyService.Edges.subscribe((edges: DataSet<Edge>) => this.dsEdge = edges));
+    this.subs.add(this.familyService.Nodes.subscribe((nodes: DataSet<Node>) => this.dsNode = nodes));
   }
 
   ngOnInit(): void {
-    this.visNetworkData = { nodes: this.nodes, edges: this.links };
-    const config = this.mergeDeep(DEFAULT_CONFIG, this.config)
-    this.visNetworkData = this.familyService.transformData(this.nodes, this.links, this.unions, config);
   }
 
-  public networkInitialized(): void {
-    this.visNetworkService.on(this.visNetwork, 'click');
+  ngAfterViewInit(): void {
+    this.createNetwork();
+  }
 
-    this.visNetworkService.click.subscribe((eventData: any[]) => {
-      if ( eventData[1].nodes.length > 0 ) {
-        this.selected.emit(this.familyService.getFamilyNode(eventData[1].nodes[0]));
-      }
+  createNetwork(): void {
+    this.visNetworkData = { nodes: this.dsNode , edges: this.dsEdge};
+    console.log(this.visNetworkData);
+    this.visNetwork = new Network(this.el.nativeElement, this.visNetworkData, OPTION_DEFAULT);
+
+    this.visNetwork.on('selectNode', (e) => {
+      this.familyService.sendClickEvent(e, 'node');
+    });
+
+    this.visNetwork.on('selectEdge', (e) => {
+      this.familyService.sendClickEvent(e);
     });
   }
 
-  mergeDeep(target, ...sources) {
-    if (!sources.length) { return target; }
-    const source = sources.shift();
-    if (isObject(target) && isObject(source)) {
-      for (const key in source) {
-        if (isObject(source[key])) {
-          if (!target[key]) {
-            Object.assign(target, { [key]: {} });
-          } else {
-            target[key] = Object.assign({}, target[key]);
-          }
-          this.mergeDeep(target[key], source[key]);
-        } else {
-          Object.assign(target, { [key]: source[key] });
-        }
-      }
-    }
-    return this.mergeDeep(target, ...sources);
-  }
-
   ngOnDestroy(): void {
-    this.visNetworkService.off(this.visNetwork, 'click');
+    this.subs.unsubscribe();
   }
 }

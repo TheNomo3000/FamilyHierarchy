@@ -1,8 +1,8 @@
+<button (click)="createNode()">Create Person</button>
+<button (click)="createUnion()">Create Union</button>
+<button (click)="createLink()">Create Link</button>
 <FamilyHierarchy 
-  [config]="config" 
-  [links]="links" 
-  [nodes]="nodes" 
-  [unions]="unions" 
-  (selected)="nodeSelected($event)">
+  [class]="'example-class'"
+  [editMode]="editMode">
 </FamilyHierarchy>
 <div style="margin-top: 2rem;">{{ result }}</div>
