@@ -65,9 +65,6 @@ export class FamilyHierarchyService {
     return this._config;
   }
 
-  /*
-  * Evento de click sobre un nodo, devuelve el dato del nodo
-  */
   private _clickNode = new Subject<any>();
   public clickNode = this._clickNode.asObservable();
 

@@ -174,30 +174,27 @@ export class AppComponent {
         age: 25
       }
     };
-    // this.fhService.createPerson(n);
     this.fhService.addNode(n);
   }
 
   createUnion(): void {
-    const n = {
+    const n: FhUnion = {
       id: 20,
       components: [23, 1],
       data: {
         test: `I'm a test :D`
       }
-    } 
-    // this.fhService.createUnion(n);
+    };
     this.fhService.addUnion(n);
   }
 
   createLink(): void {
-    const l : FhLink = {
+    const l: FhLink = {
       id: 99,
       nodeId: 23,
       unionId: 2
     }
     this.editMode = true;
     this.fhService.addLink(l);
-    // this.fhService.createLink();
   }
 }
