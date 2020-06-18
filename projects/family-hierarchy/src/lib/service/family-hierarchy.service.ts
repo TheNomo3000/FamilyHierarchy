@@ -1,7 +1,7 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject, Observable } from 'rxjs';
-import { FhNode, FhUnion, FhLink, FhConfig } from '../models/models';
-import { DataSet, Node, Edge } from 'vis-network/standalone';
+import { FhNode, FhUnion, FhLink, FhConfig, FhData } from '../models/models';
+import { DataSet, Node, Edge, Data } from 'vis-network/standalone';
 import { DEFAULT_CONFIG } from '../config/default';
 import { isObject } from 'util';
 
@@ -55,7 +55,6 @@ export class FamilyHierarchyService {
     return this._fhLinks;
   }
 
- 
   private currentConfig = new BehaviorSubject<FhConfig>(DEFAULT_CONFIG);
   public _config: Observable<FhConfig> = this.currentConfig.asObservable();
   public setConfig(config: FhConfig) {
@@ -64,6 +63,9 @@ export class FamilyHierarchyService {
   public get config(): Observable<FhConfig> {
     return this._config;
   }
+
+  private init = new Subject<boolean>();
+  public _init: Observable<boolean> = this.init.asObservable();
 
   private _clickNode = new Subject<any>();
   public clickNode = this._clickNode.asObservable();
@@ -98,13 +100,19 @@ export class FamilyHierarchyService {
   
   constructor() { }
 
-  public initialize(nodes: FhNode [], links: FhLink [], unions: FhUnion [], config?: FhConfig): void {
-    this.setFhNodes(nodes);
-    this.setFhLinks(links);
-    this.setFhUnions(unions);
+  public initialize(data: FhData, config?: FhConfig): void {
+    this.currentFhLinks.next(data.links);
+    this.currentFhNodes.next(data.nodes);
+    this.currentFhUnions.next(data.unions);
+    this.currentEdges.next(this.generateEdges(data.links)),
+    this.currentNodes.next(this.generateNodes(data.nodes))
+    this.generateUnions(data.unions);
+
     if (config) {
       this.setConfig(config);
     }
+
+    this.init.next(true);
   }
 
   private mergeDeep(target, ...sources) {
