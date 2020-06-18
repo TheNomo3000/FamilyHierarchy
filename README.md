@@ -11,7 +11,7 @@ A small library for **Angular 9+** that implements [vis-network](https://github.
 We use ngx-vis, to generate the graph, and so we have to install some dependencies: 
 
 ```bash
-npm install moment @egjs/hammerjs vis-data vis-util keycharm
+npm install moment vis-data vis-network vis-util @egjs/hammerjs
 ```
 
 ## Installation
