@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "license": "MIT",
   "peerDependencies": {
-    "@angular/common": "^9.0.7",
-    "@angular/core": "^9.0.7",
-    "tslib": "^1.10.0",
-    "vis-network": "^7.6.9",
     "@egjs/hammerjs": "^2.0.17",
-    "moment": "^2.26.0"
+    "moment": "^2.26.0",
+    "vis-data": "^6.5.3",
+    "vis-network": "^7.6.9",
+    "vis-util": "^4.0.2"
   },
   "devDependencies": {
     "@egjs/hammerjs": "^2.0.17",
@@ -30,6 +29,8 @@
     "vis-network",
     "visjs",
     "lightweight",
-    "simple"
+    "simple",
+    "vis-data",
+    "vis-utils"
   ]
 }
