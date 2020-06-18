@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { FhUnion, FhNode, FhLink } from 'projects/family-hierarchy/src/lib/models/models';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { FhUnion, FhNode, FhLink, FhData } from 'projects/family-hierarchy/src/lib/models/models';
 import { FhConfig } from 'projects/family-hierarchy/src/public-api';
 import { FamilyHierarchyService } from 'projects/family-hierarchy/src/lib/service/family-hierarchy.service';
 
@@ -118,7 +118,7 @@ const NODES: FhNode [] = [
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
   editMode = false;
   links = LINKS;
   unions = UNIONS;
@@ -137,9 +137,15 @@ export class AppComponent {
   };
   result;
 
-  constructor(private fhService: FamilyHierarchyService) {
-    this.fhService.initialize(NODES, LINKS, UNIONS, this.config);
-    // this.fhService.clickNode.subscribe( (e) => {console.log('EVENT RECIVED: ', e)})
+  constructor(private fhService: FamilyHierarchyService) { }
+
+  ngAfterViewInit(): void {
+    const data: FhData = {
+      nodes: NODES,
+      links: LINKS,
+      unions: UNIONS
+    }
+    this.fhService.initialize(data, this.config);
     this.fhService.clickNode.subscribe(
       (result) => {
         console.log('NODE: ', result);

@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, Input, ContentChild, TemplateRef, OnInit, Output, EventEmitter, OnDestroy, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, ViewChild, Input, ContentChild, TemplateRef, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { OPTION_DEFAULT } from '../config/default';
 import { FamilyHierarchyService } from '../service/family-hierarchy.service';
 import { FhConfig } from '../models/models';
@@ -17,7 +17,7 @@ export class FamilyHierarchyComponent implements  OnInit, OnDestroy, AfterViewIn
   @ViewChild('contentNode') contentNode: ElementRef;
 
 
-  @Input() class: string;
+  @Input() class: string = '';
   @Input() editMode = false;
 
   config: FhConfig;
@@ -29,22 +29,26 @@ export class FamilyHierarchyComponent implements  OnInit, OnDestroy, AfterViewIn
 
   subs = new Subscription();
 
-  constructor(private familyService: FamilyHierarchyService) {
-    this.subs.add(this.familyService._config.subscribe((config: FhConfig) => this.config = config));
-    this.subs.add(this.familyService.Edges.subscribe((edges: DataSet<Edge>) => this.dsEdge = edges));
-    this.subs.add(this.familyService.Nodes.subscribe((nodes: DataSet<Node>) => this.dsNode = nodes));
-  }
+  constructor(private familyService: FamilyHierarchyService) { }
 
   ngOnInit(): void {
   }
 
   ngAfterViewInit(): void {
-    this.createNetwork();
+    const init = this.familyService._init
+      .subscribe(
+        (e) => {
+          this.createNetwork();
+        }
+      );
+    this.subs.add(init);
+    this.subs.add(this.familyService._config.subscribe((config: FhConfig) => this.config = config));
+    this.subs.add(this.familyService.Edges.subscribe((edges: DataSet<Edge>) => this.dsEdge = edges));
+    this.subs.add(this.familyService.Nodes.subscribe((nodes: DataSet<Node>) => this.dsNode = nodes));
   }
 
   createNetwork(): void {
     this.visNetworkData = { nodes: this.dsNode , edges: this.dsEdge};
-    console.log(this.visNetworkData);
     this.visNetwork = new Network(this.el.nativeElement, this.visNetworkData, OPTION_DEFAULT);
 
     this.visNetwork.on('selectNode', (e) => {
