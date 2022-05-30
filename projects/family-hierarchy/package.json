@@ -4,14 +4,14 @@
   "license": "MIT",
   "peerDependencies": {
     "@egjs/hammerjs": "^2.0.17",
-    "moment": "^2.26.0",
+    "moment": "^2.29.2",
     "vis-data": "^6.5.3",
     "vis-network": "^7.6.9",
     "vis-util": "^4.0.2"
   },
   "devDependencies": {
     "@egjs/hammerjs": "^2.0.17",
-    "moment": "^2.26.0",
+    "moment": "^2.29.2",
     "vis-data": "^6.5.3",
     "vis-network": "^7.6.9",
     "vis-util": "^4.0.2"
